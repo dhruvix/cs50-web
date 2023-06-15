@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Search</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <ul class="navbar">
+        <li><a href="index.html">Google search</a></li>
+        <li><a href="images.html">Image search</a></li>
+    </ul>
+    <div class="advanced-search-form">
+        <h1>Google Advanced Search</h1>
+        
+        <div class="advanced-search-form">
+            <div class="push-left">
+                <p style="color:black">Find pages with...</p>
+            </div>
+            <form style="width: 100%;" action="https://google.com/search">
+                <div class="text-grid">
+                    <label for="all" style="color:black">all these words:</label>
+                    <input class="adv-text-field" type="text" name="as_q" id="all">
+                    <label for="exact" style="color:black">this exact word or phrase:</label>
+                    <input class="adv-text-field" type="text" name="as_epq" id="exact">
+                    <label for="any" style="color:black">any of these words:</label>
+                    <input class="adv-text-field" type="text" name="as_oq" id="any">
+                    <label for="none" style="color:black">none of these words:</label>
+                    <input class="adv-text-field" type="text" name="as_eq" id="none">
+                </div>
+                <div class="button-group">
+                    <input type="submit" value="Advanced Search">
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

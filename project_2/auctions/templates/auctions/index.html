@@ -1,0 +1,43 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('#price').forEach(p => {
+            p.innerHTML = "₹"+Number(p.innerHTML).toFixed(2);
+          });
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+<h2>{{message}}</h2>
+
+<div class="card-display">
+  {% if listings %}
+  {% for listing in listings %}
+  <div class="card info-card bg-light" style="width: 18rem; height: 25rem;">
+    <img class="card-img-top" src={{listing.image_url}} style="height: 11rem" alt={{listing}}>
+    <div class="card-body">
+      <h5 class="card-title">{{listing}}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">by {{listing.owner}}</h6>
+      <p id="description" class="card-text">{{listing.description}}</p>
+      {% if listing.active %}
+      <div>
+        <a href='/listing/{{listing.id}}' class="btn btn-primary">view listing</a>
+        {% if listing.price %}
+        <button type="button" class="btn btn-outline-success" id="price" disabled>{{listing.price}}</button>
+        {% endif %}
+      </div>
+      {% else %}
+      <a href='/listing/{{listing.id}}' class="btn btn-secondary">view listing</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+  {% else %}
+  <h4>{{empty_message}}</h4>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+{{ user_data|json_script:"user_data" }}
+
+<div id="profile-header mb-2">
+    <div class="card text-center">
+        <div class="card-body profile-body">
+            <h2>{{user_data.username}}</h2>
+            <p><strong>{{user_data.email}}</strong></p>
+            <div class="btn-group" role="group" aria-label="follows">
+                <button type="button" class="btn btn-warning">followers: <span class="badge badge-warning" id="num_followers">{{user_data.followers}}</span></button>
+                <button type="button" class="btn btn-warning">following: <span class="badge badge-warning" id="num_following">{{user_data.follow}}</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="display-posts" class="accordion"></div>
+
+<nav class="mt-2" aria-label="Page navigation example">
+    <div class="btn-group justify-content-center" role="group" aria-label="Page navigation">
+        <button type="button" class="btn btn-outline-primary disabled" id="prev-page">&laquo; Previous page</button>
+        <button type="button" class="btn btn-outline-primary disabled" id="next-page">Next page &raquo;</button>
+    </div>
+</nav>
+
+{% csrf_token %}
+<script type="module" src="{% static 'network/profile.js' %}"></script>
+{% endblock %}

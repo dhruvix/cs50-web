@@ -1,0 +1,157 @@
+{% extends "events/layout.html" %}
+{% load static %}
+
+{% block body %}
+{% if allowed %}
+<div id="event-page-body">
+    <!-- Event header -->
+    <div class="h1 text-center">
+        <h1>{{title}}</h1>
+    </div>
+    <!-- Extra details visible if the logged in user has created the event -->
+    <div id="event-subtitle">
+        {% if user.id == inviter_id %}
+        <div class="dropdown">
+            <button class="btn btn-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Options <i class="bi bi-sliders"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a href="/edit/{{event_id}}" class="dropdown-item"><i class="bi bi-pencil"></i> Edit page</a></li>
+              <li><a href="#rsvp-view" class="dropdown-item"><i class="bi bi-envelope-check"></i> Invitations</a></li>
+            </ul>
+          </div>
+        {% else %}
+        <h6 class="card-subtitle text-muted">hosted by {{inviter}}</h6>
+        {% endif %}
+        <div class="btn-group">
+            <a href="#" class="btn">{{start_date}}</a>
+            <a href="#" class="btn"><i class="bi bi-calendar2-week"></i></a>
+            <a href="#" class="btn">{{end_date}}</a>
+        </div>
+        {% if location %}
+        <a href="{{location}}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">view location <i
+                class="bi bi-geo-alt-fill"></i></a>
+        {% else %}
+        <p class="text-secondary">no location <i class="bi bi-building-x"></i></p>
+        {% endif %}
+    </div>
+    <div class="event-cards p-2">
+        {% for card in cards %}
+        {% if card.type == 'T' %}
+        <div class="card mb-2">
+            <div class="card-body">
+                <p class="card-text" style="white-space: pre-line">{{card.text}}</p>
+            </div>
+        </div>
+        {% elif card.type == 'IT' %}
+        <div class="card mb-2">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="{% get_media_prefix %}{{card.image}}" alt="card {{card.id}} image"
+                        class="img-fluid rounded-start">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <p class="card-text" style="white-space: pre-line">{{card.text}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif card.type == 'TI' %}
+        <div class="card mb-2">
+            <div class="row g-0">
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <p class="card-text" style="white-space: pre-line">{{card.text}}</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <img src="{% get_media_prefix %}{{card.image}}" alt="card {{card.id}} image"
+                        class="img-fluid rounded-start">
+                </div>
+            </div>
+        </div>
+        {% elif card.type == 'I' %}
+        <div class="card mb-2">
+            <div class="card-body">
+                <img src="{% get_media_prefix %}{{card.image}}" alt="card {{card.id}} image" class="card-img">
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <!-- Invitation dashboard -->
+    {% if user.id == inviter_id %}
+    <div id="rsvp-view" class="card" style="width: 90%;">
+        <div class="card-body">
+            <h5 class="card-title">Manage Invitations</h5>
+            <button type="button" class="btn btn-outline-dark mb-2" data-bs-toggle="modal" data-bs-target="#rsvpModal">
+                View sent invitations
+            </button>
+            <h6 class="card-subtitle mb-2 text-muted">Send out new invite:</h6>
+            <div class="row mb-2">
+                <div class="col">
+                  <input type="text" class="form-control" placeholder="First name" aria-label="First name" id="rsvp_first_name">
+                </div>
+                <div class="col">
+                  <input type="text" class="form-control" placeholder="Last name" aria-label="Last name" id="rsvp_last_name">
+                </div>
+            </div>
+            <input type="email" class="form-control" placeholder="Email" aria-label="Email" id="rsvp_email">
+            <input type="hidden" id="rsvp_event" value="{{event_id}}">
+            <button class="btn btn-warning mt-2" id="invite-submit">Send <i class="bi bi-send-fill"></i></button>
+        </div>
+
+        <!-- Modal to view sent invitations -->
+        <div class="modal fade" id="rsvpModal" tabindex="-1" aria-labelledby="rsvpModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen-md-down">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="rsvpModalLabel">Sent invites</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="invite-table"></div>
+                        <div class="btn-group justify-content-center" role="group" aria-label="Page navigation">
+                            <button type="button" class="btn btn-sm btn-outline-dark disabled" id="prev-invite-page">&laquo; Previous page</button>
+                            <button type="button" class="btn btn-sm btn-outline-dark disabled" id="next-invite-page">Next page &raquo;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="invite-toast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-warning">
+                <img src="{% static 'assets/Kairos-transparent.png' %}" class="rounded me-2" alt="kairos-logo" height="17px"
+                    width="17px">
+                <strong class="me-auto">Kairos</strong>
+                <small>Just now</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<script src="{% static 'events/event.js' %}"></script>
+
+{% else %}
+<div class="card auth-card m-5">
+    <div class="card-body d-flex flex-column justify-content-center align-items-center">
+        <h5 class="card-title text-danger">{{message}}</h5>
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor"
+            class="bi bi-sign-dead-end-fill" viewBox="0 0 16 16">
+            <path
+                d="M5.116 6.28h.32c.395 0 .582.24.582.722 0 .48-.186.718-.581.718h-.321V6.28Zm3.636.066.268.845h-.552l.27-.845h.014Zm1.327-.066h.32c.394 0 .582.24.582.722 0 .48-.186.718-.582.718h-.32V6.28Zm-.792 3h.32c.395 0 .582.24.582.722 0 .48-.186.718-.581.718h-.32V9.28Z" />
+            <path
+                d="M9.05.435c-.58-.58-1.52-.58-2.1 0L.436 6.95c-.58.58-.58 1.519 0 2.098l6.516 6.516c.58.58 1.519.58 2.098 0l6.516-6.516c.58-.58.58-1.519 0-2.098L9.05.435ZM4.782 6h.69c.596 0 .886.355.886.998S6.066 8 5.473 8h-.69V6ZM7.82 7.72V8H6.571V6H7.82v.28h-.917v.57h.863v.268h-.863v.602h.917Zm.397.28h-.34l.688-2h.371l.689 2h-.352l-.177-.554h-.702L8.216 8Zm1.53-2h.69c.596 0 .886.355.886.998S11.03 8 10.436 8h-.69V6Zm-2.923 4.72V11H5.575V9h1.248v.28h-.917v.57h.863v.268h-.863v.602h.917Zm.572.28h-.32V9h.294l.933 1.436h.014V9h.32v2h-.292l-.936-1.44h-.013V11Zm1.56-2h.69c.596 0 .886.355.886.998S10.238 11 9.645 11h-.69V9Z" />
+        </svg>
+    </div>
+</div>
+{% endif %}
+
+
+{% endblock %}

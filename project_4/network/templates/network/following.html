@@ -1,0 +1,46 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="card mb-2">
+    <div class="card-body">
+        <div class="d-flex w-100 justify-content-between">
+            <h3>Posts by the people you follow</h3>
+            {% if user.is_authenticated %}
+            <div class="btn-group dropleft">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Following <span class="badge badge-light">{{user.following.all.count}}</span>
+                </button>
+                {% if user.following.all.count %}
+                <div class="dropdown-menu">
+                    {% for f in user.following.all %}
+                    <a class="dropdown-item" href="/profile/{{f.id}}">{{f.username}}</a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="dropdown-menu p-4 text-muted" style="max-width: 200px;">
+                    <p>
+                      You aren't following anybody.
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div id="display-posts" class="accordion"></div>
+
+<nav class="mt-2" aria-label="Page navigation example">
+    <div class="btn-group justify-content-center" role="group" aria-label="Page navigation">
+        <button type="button" class="btn btn-outline-dark disabled" id="prev-page">&laquo; Previous page</button>
+        <button type="button" class="btn btn-outline-dark disabled" id="next-page">Next page &raquo;</button>
+    </div>
+</nav>
+
+{{ "following"|json_script:"page_type" }}
+{% csrf_token %}
+
+<script type="module" src="{% static 'network/index.js' %}"></script>
+{% endblock %}

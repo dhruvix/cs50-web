@@ -1,0 +1,85 @@
+{% extends "events/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div id="index-body">
+    <div class="card border-warning m-3 auth-card text-center" id="title-card">
+        <div class="card-body">
+          <h5 class="card-title"><strong>Welcome to Kairos</strong></h5>
+          <h6 class="card-subtitle mb-2 text-body-secondary">Manage all your invites and RSVPs like a pro.</h6>
+          <img id="main-logo" src="{% static 'assets/Kairos-transparent.png' %}" alt="kairos logo">
+          <p class="card-text">Kairos is the ancient Greek word for a time when the conditions are right for the accomplishment of a crucial action. <br>
+            You've already chosen the perfect time to host your event, this is the perfect time to use <strong>Kairos</strong>.</p>
+        </div>
+    </div>
+    {% if user.is_authenticated%}
+    <div class="card border-warning m-3 auth-card text-center" id="create-index-card">
+        <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-body-secondary">Thinking of throwing a party?</h6>
+            <p>Click the button below to get started!</p>
+            <a class="btn btn-success btn-lg" id="index-page" href="{% url 'create_page' %}"><i class="bi bi-plus-circle-fill"></i> Create a new Event</a>
+        </div>
+    </div>
+    {{ "true"|json_script:"logged_in" }}
+    {% else %}
+    <div class="card border-warning m-3 auth-card" id="Login-card">
+        <div class="card-header">
+            <strong>Login</strong> <div class="text-danger" id="login-feedback">{{login_message}}</div>
+        </div>
+        <div class="card-body">
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="login-email" name="email" placeholder="name@example.com">
+                    <label for="login-email">Email address</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="login-password" name="password" placeholder="Password">
+                    <label for="login-password">Password</label>
+                </div>
+                <input class="btn btn-success" type="submit" value="Login">
+            </form>
+        </div>
+        <div class="card-footer text-body-secondary">
+            Don't have an account? Register below!
+        </div>
+    </div>
+    <div class="card border-warning m-3 auth-card" id="Register-card">
+        <div class="card-header">
+            <strong>Register</strong> <div class="text-danger">{{register_message}}</div>
+        </div>
+        <div class="card-body">
+            <form action="{% url 'register' %}" method="post">
+                {% csrf_token %}
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="register-email" name="email" placeholder="name@example.com" required>
+                    <label for="register-email">Email address</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="register-first-name" name="first_name" placeholder="name" required>
+                    <label for="register-first-name">First name</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="register-last-name" name="last_name" placeholder="name" required>
+                    <label for="register-last-name">Last name</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="register-password" name="password" placeholder="Password" required>
+                    <label for="register-password">Password</label>
+                </div>
+                <div class="form-floating mb-3 has-">
+                    <input type="password" class="form-control" id="register-confirmation" name="confirmation" placeholder="Confirmation Password">
+                    <label for="register-confirmation">Confirm password</label>
+                </div>
+                <input class="btn btn-success" id="register-submit" type="submit" value="Register">
+                <div class="text-danger" id="register-feedback"></div>
+            </form>
+        </div>
+    </div>
+    {{ "false"|json_script:"logged_in" }}
+    {% endif %}
+</div>
+
+<script src="{% static 'events/index.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="card mb-2">
+    <div class="card-body">
+        <div class="d-flex w-100 justify-content-between">
+            <h3>All posts</h3>
+            {% if user.is_authenticated %}
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Create new post</button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div id="display-posts" class="accordion"></div>
+
+<nav class="mt-2" aria-label="Page navigation example">
+    <div class="btn-group justify-content-center" role="group" aria-label="Page navigation">
+        <button type="button" class="btn btn-outline-dark disabled" id="prev-page">&laquo; Previous page</button>
+        <button type="button" class="btn btn-outline-dark disabled" id="next-page">Next page &raquo;</button>
+    </div>
+</nav>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New post</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="post-form" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username" class="col-form-label">Original poster:</label>
+                        <input type="text" class="form-control" id="username" value={{user}} disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">What do you want to say?</label>
+                        <textarea class="form-control" id="message-text"></textarea>
+                    </div>
+                    <input type="submit" class="btn btn-primary" id="create-post-btn" value="Post">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="{% static 'network/index.js' %}"></script>
+{{ "index"|json_script:"page_type" }}
+{% endblock %}

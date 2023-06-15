@@ -1,0 +1,19 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    {{q}}
+{% endblock %}
+
+{% block body %}
+    {% if res %}
+        <h1>Pages with names similar to {{q}}</h1>
+
+        <ul>
+            {% for entry in res %}
+                <li><a href='/wiki/{{entry}}'>{{ entry }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <h1>No page with title "{{q}}" &#128194;</h1>
+    {% endif %}
+{% endblock %}

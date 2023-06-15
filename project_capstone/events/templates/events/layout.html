@@ -1,0 +1,164 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Kairos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="{% static 'events/styles.css' %}" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{% static 'assets/Kairos-100.png' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-warning">
+        <div class="container-fluid">
+          <button class="navbar-brand btn btn-warning text-dark p-0"><img src="{% static 'assets/Kairos-transparent.png' %}" alt="Kairos" width="30" height="30"> Kairos</button>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-chevron-bar-expand"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link btn btn-warning text-dark" id="index-page" href="{% url 'index' %}">Home</a>
+                  </li>
+                  {% if user.is_authenticated %}
+                  <li class="nav-item">
+                    <a class="nav-link btn btn-warning text-dark" id="events-page" href="{% url 'my_events_page' %}">My events</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link btn btn-warning text-dark" id="create-page" href="{% url 'create_page' %}">Create event</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link btn btn-outline-warning text-dark position-relative" id="invites-page" data-bs-toggle="offcanvas" href="#offcanvas-invites" role="button" aria-controls="offcanvas-invites">
+                      Invites
+                    </a>
+                  </li>
+                  {% endif %}
+                </ul>
+                {% if user.is_authenticated %}
+                <div class="navbar-nav mb-lg-0">
+                    <div class="dropdown dropstart">
+                        <button class="btn btn-success btn-crc" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle"></i></button>
+                        <ul class="dropdown-menu">
+                            <li><button class="btn btn-outline-light text-dark" data-bs-toggle="modal" data-bs-target="#account-modal">{{user.first_name}} {{user.last_name}}</button></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout <i class="bi bi-box-arrow-right"></i></a></li>
+                            {% if user.is_staff %}
+                            <li><a class="dropdown-item" href="/admin">Admin <i class="bi bi-person-check"></i></a></li>
+                            {% endif %}
+                          </ul>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="body">
+        {% block body %}
+        {% endblock %}
+    </div>
+
+    <!-- Off-canvas component to view invites -->
+    {% if user.is_authenticated %}
+    <div class="offcanvas offcanvas-lg offcanvas-start" tabindex="-1" id="offcanvas-invites" aria-labelledby="offcanvas-invites-label">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvas-invites-label">Pending invites</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <div id="main-invites">
+            <strong>You have no pending invites!</strong>
+          </div>
+        </div>
+        <script src="{% static 'events/invites.js' %}"></script>
+    </div>
+
+    <!-- Edit account Modal -->
+    <div class="modal fade" id="account-modal" tabindex="-1" aria-labelledby="accountModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-warning">
+            <h5 class="modal-title" id="accountModalLabel">Edit profile <i class="bi bi-person-lines-fill"></i></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <div class="mb-3">
+                <label for="modal-email" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="modal-email" aria-describedby="email" value="{{user.email}}" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="modal-fn" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="modal-fn" aria-describedby="fn" value="{{user.first_name}}">
+              </div>
+              <div class="mb-3">
+                <label for="modal-ln" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="modal-ln" aria-describedby="ln" value="{{user.last_name}}">
+              </div>
+              <div class="mb-3">
+                <label for="modal-np" class="form-label">Change Password</label>
+                <input type="text" class="form-control" id="modal-np" aria-describedby="ln" placeholder="New Password">
+              </div>
+              <div class="mb-3">
+                <label for="modal-password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="modal-password">
+              </div>
+              <button class="btn btn-success" id="edit-profile-button">Verify and save changes</button>
+              <div id="passwordHelpBlock" class="form-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    {% csrf_token %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script>
+      // function to change the account details
+      document.addEventListener('DOMContentLoaded', function () {
+        let edit_profile_button = document.getElementById('edit-profile-button');
+        edit_profile_button.addEventListener('click', change_password)
+      });
+
+      function change_password(){
+        let edit_profile_button = document.getElementById('edit-profile-button');
+        edit_profile_button.innerHTML = '<div class="spinner-border spinner-border-sm text-light" role="status"></div>';
+        let email = document.getElementById('modal-email');
+        let first_name = document.getElementById('modal-fn');
+        let last_name = document.getElementById('modal-ln');
+        let password = document.getElementById('modal-password');
+        let new_password = document.getElementById('modal-np');
+        const request = new Request(
+        "/change_password",
+        { headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value } }
+        );
+        fetch(request, {
+            method: 'POST',
+            body: JSON.stringify({
+                first_name: first_name.value,
+                last_name: last_name.value,
+                email: email.value,
+                password: password.value,
+                new_password: new_password.value
+            })
+            }).then(response => {
+            if(response.status === 200){
+              password.value = "";
+              new_password.value = "";
+              edit_profile_button.innerHTML = "Verify and save changes";
+            }
+            else{
+                response.json().then(res => {
+                    document.getElementById('passwordHelpBlock').innerHTML = "Incorrect password"
+                });
+            }
+        });
+      }
+    </script>
+</body>
+
+</html>

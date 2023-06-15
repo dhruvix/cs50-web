@@ -1,0 +1,80 @@
+{% extends "mail/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">d-mail</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+                <button class="btn btn-sm btn-primary active" id="inbox">Inbox</button>
+            </li>
+            <li class="nav-item">
+                <button class="btn btn-sm btn-primary" id="compose">Compose</button>
+            </li>
+            <li class="nav-item">
+                <button class="btn btn-sm btn-primary" id="sent">Sent</button>
+            </li>
+            <li class="nav-item">
+                <button class="btn btn-sm btn-primary" id="archived">Archived</button>
+            </li>
+          </ul>
+          <div class="nav-item dropdown">
+            <button class="nav-link dropdown-toggle btn btn-sm btn-outline-light" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ request.user.email }}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item btn btn-sm" href="{% url 'logout' %}">Log Out</a>
+            </div>
+        </div>
+        </div>
+    </nav>
+
+    <div class="alert"></div>
+
+    <div class="container" id="emails-view">
+        <h3 class="email-heading"></h3>
+        <div class="list-group"></div>
+    </div>
+
+    <div class="container" id="compose-view">
+        <h3>Compose New Email</h3>
+        <form id="compose-form" method="post">
+            <div class="form-group">
+                From: <input disabled class="form-control" value="{{ request.user.email }}">
+            </div>
+            <div class="form-group">
+                To: <input id="compose-recipients" class="form-control" name="recipients">
+            </div>
+            <div class="form-group">
+                <input class="form-control" id="compose-subject" placeholder="Subject" name="subject">
+            </div>
+            <textarea class="form-control" id="compose-body" placeholder="Body" name="body"></textarea>
+            <input type="submit" class="btn btn-primary mt-2" value="Send">
+        </form>
+    </div>
+
+    <div class="container" id="single-email-view">
+        <div class="card">
+            <div class="card-header" id="email-subject"></div>
+            <div class="card-body">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="card-subtitle mb-2 text-muted" id="email-sender"></h6>
+                    <small id="email-timestamp"></small>
+                </div>
+                <h6 class="card-subtitle mb-2 text-muted" id="email-recipients"></h6>
+                <hr class="my-4">
+                <p class="card-text" id="email-body"></p>
+                <div id="email-buttons">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'mail/inbox.js' %}"></script>
+{% endblock %}

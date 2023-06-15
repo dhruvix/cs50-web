@@ -1,0 +1,111 @@
+{% extends "auctions/layout.html" %}
+
+{% block script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          let inp = document.getElementById('enter-bid');
+          inp.min = Number(inp.min) + 0.01;
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+<div class="product-container bg-light">
+    <img class="product-image" src={{listing.image_url}} alt={{listing}}>
+    <div class="product-details">
+        <h1 class="display-4">{{listing}}</h1>
+        <h4 class="display-6">Listed by: {{listing.owner}} <span
+                class="badge badge-pill badge-secondary">{{listing.category}}</span></h4>
+        <p class="lead">{{listing.description}}</p>
+    </div>
+</div>
+<div class="product-information">
+    {% if listing.active %}
+    <div class="card" style="width: 18rem; margin-left: 1%;">
+        <div class="card-header">
+            Price of listing
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Current price = ₹{{bid_price.amount}}</li>
+            <li class="list-group-item">Starting bid = ₹{{listing.starting_bid}}</li>
+            <li class="list-group-item">highest bidder: {{bid_price.user}}</li>
+        </ul>
+    </div>
+    <div class="product-bid bg-light">
+    {% if user.is_authenticated %}
+        <form class="bid-form" action="{% url 'bid' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="listing_id" value={{listing.id}}>
+            <label for="enter-bid">Enter bid to win. {{bids}} bid(s) placed so far</label>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3">₹</span>
+                </div>
+                <input type="number" step="0.01" min={{bid_price.amount}} class="form-control" id="enter-bid" name="amount" placeholder="Bid amount">
+            </div>
+            <button type="submit" class="btn btn-primary">Bid</button>
+        </form>
+        <p style="margin: 2%;">or</p>
+        {% if watchlist %}
+            <form action="{% url 'watchlist' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="listing" value={{listing.id}}>
+                <button type="submit" class="btn btn-outline-danger">Remove from watchlist</button>
+            </form>
+        {% else %}
+            <form action="{% url 'watchlist' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="listing" value={{listing.id}}>
+                <button type="submit" class="btn btn-outline-primary">Add to watchlist</button>
+            </form>
+        {% endif %}
+        {% if user == listing.owner %}
+            <p style="margin: 2%;">or</p>
+            <form action="{% url 'close' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="listing" value={{listing.id}}>
+                <button type="submit" class="btn btn-outline-dark">Close listing</button>
+            </form>
+        {% endif %}
+    {% else %}
+        <h4>Log in to place bids</h4>
+    {% endif %}
+    </div>
+</div>
+{% else %}
+<h1 class="display-5">This listing is no longer active. It was won by {{listing.winner}}</h1>
+{% endif %}
+</div>
+<div class="comment-box card" style="margin:10px; padding: 5px;">
+    <h4>Comments</h4>
+    {% if comments %}
+    {% for comment in comments %}
+    <div class="card">
+        <div class="card-body">
+          <blockquote class="blockquote mb-0">
+            <p>{{comment.comment}}</p>
+            <footer class="blockquote-footer">{{comment.user}}</footer>
+          </blockquote>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="card-body">
+        <blockquote class="blockquote mb-0">
+          <p>No comments have been posted yet</p>
+        </blockquote>
+    </div>
+    {% endif %}
+    {% if user.is_authenticated %}
+    <form action="{% url 'comment' %}" method="post" style="margin-top: 5px;">
+        {% csrf_token %}
+        <input type="hidden" name="listing_id" value={{listing.id}}>
+        <div class="form-group">
+            <label for="com">Post new Comment</label>
+            <textarea class="form-control" name="comment" id="com" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Post</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

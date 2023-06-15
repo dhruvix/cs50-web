@@ -1,0 +1,82 @@
+{% extends "events/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div id="create-page-body">
+    <div class="card border-warning m-3 auth-card text-center" id="title-card">
+        <div class="card-body">
+            <h4 class="card-title">Start by telling us about your event:</h4>
+            <div id="progress-bar-load" class="progress mb-1" role="progressbar" aria-label="Animated striped example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="height: 7px; visibility: hidden">
+                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" style="width: 100%"></div>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control form-control-lg event-form-input" id="event-title" name="title"
+                    placeholder="Event title">
+                <label for="event-title">What would you like to call your event?</label>
+                <div id="event-title" class="invalid-feedback">
+                    Your event must have a title!
+                </div>
+            </div>
+            <div class="row g-2">
+                <div class="col-md">
+                    <div class="form-floating mb-3">
+                        <input type="datetime-local" class="form-control event-form-input" id="event-start-time" name="start_time">
+                        <label for="event-start-time">Starting date and time</label>
+                        <div id="event-start-time" class="invalid-feedback">
+                            Event must have a future start date
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating mb-3">
+                        <input type="datetime-local" class="form-control event-form-input" id="event-end-time" name="end_time">
+                        <label for="event-end-time">Ending date and time</label>
+                        <div id="event-end-time" class="invalid-feedback">
+                            End date must be after the start date
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-2">
+                <div class="col-md">
+                    <div class="form-floating mb-3">
+                        <select class="form-select event-form-input" id="event-type-select">
+                            <option selected value="">Choose...</option>
+                            {% for type in event_types %}
+                            <option value={{type.id}}>{{type.name}}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="event-type-select">What type of event is it?</label>
+                        <div id="event-type-select" class="invalid-feedback">
+                            You must choose an event type
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control event-form-input" id="event-location"
+                            placeholder="https://goo.gl/maps/mksvifGnwgPYPBdK7">
+                        <label for="event-location">Location</label>
+                        <div id="event-location" class="invalid-feedback">
+                            Please provide a valid google maps url.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-2">
+                <div class="col-md">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="event-thumbnail">Add a thumbnail</label>
+                        <input type="file" accept="image/*" class="form-control event-form-input" id="event-thumbnail">
+                    </div>
+                </div>
+                <div class="col-md">
+                    <button class="btn btn-success" id="event-create-button"><i class="bi bi-plus-circle-fill"></i> Create Event</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'events/create.js' %}"></script>
+{% endblock %}

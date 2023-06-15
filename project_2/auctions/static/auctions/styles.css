@@ -1,0 +1,66 @@
+body {
+    padding: 10px;
+}
+
+.card-display {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.card-display div {
+    margin: 5px;
+}
+
+#description {
+    height: 4.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product-image {
+    height: 90%;
+    max-width: 40%;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+.product-container {
+    height: 45vh;
+    margin: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.product-details {
+    width: 59%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.product-information {
+    display: flex;
+    justify-content: space-between;
+}
+
+.product-bid {
+    width: 78%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bid-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.comment-box {
+    margin: 5px;
+    padding: 5px;
+}

@@ -1,0 +1,16 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block body %}
+    {% if entry %}
+        {% autoescape off %}
+            {{ entry}}
+        {% endautoescape %}
+        <a href="/editpage?title={{title}}"><button class="btn btn-warning mb-2">Edit this page</button></a>
+    {% else %}
+        <h1>Page not found &#128194;</h1>
+    {% endif %}
+{% endblock %}

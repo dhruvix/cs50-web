@@ -1,0 +1,125 @@
+h1, p, label {
+    color: #4285F4;
+    font-family: 'Roboto', sans-serif;
+}
+
+label, p {
+    padding-left: 1%;
+    font-size: 120%;
+}
+
+label {
+    font-size: 90%;
+    display: flex;
+    align-items: center;
+}
+
+.navbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.navbar > li {
+    float: right;
+}
+
+.navbar > li a {
+    font-family: 'Roboto', sans-serif;
+    display: block;
+    color: #4285F4;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.navbar > li a:hover{
+    color: #4285F4;
+    text-decoration: underline;
+}
+
+.search-form {
+    margin: auto;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+input[type=text] {
+    margin: auto;
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border-radius: 50px;
+    color: black;
+    background-color: transparent;
+    font-family: 'Roboto', sans-serif;
+}
+
+input[type=text]:focus {
+    border: 2px solid #4285F4;
+}
+
+input[type=submit], input[type=button]{
+    padding: 10px 10px;
+    margin: 8px 4px;
+    box-sizing: border-box;
+    border: 1px solid #4285F4;
+    border-radius: 5px;
+    color:white;
+    background-color: #4285F4;
+    font-family: 'Roboto', sans-serif;
+}
+
+input[type=submit]:hover, input[type=button]:hover {
+    color:white;
+    background-color: #5693f5;
+    border: 1px solid #5693f5;
+    cursor: pointer;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.advanced-search-form {
+    margin: auto;
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#all, #exact, #any, #none {
+    margin: auto;
+    width: 70%;
+    padding: 8px 8px;
+    margin: 5px 0;
+    box-sizing: border-box;
+    border: 1px solid black;
+    border-radius: 2.5px;
+    color: black;
+    background-color: transparent;
+    font-family: 'Roboto', sans-serif;
+}
+
+.push-left {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+}
+
+.text-grid {
+    display: grid;
+    grid-template-columns: 21% 79%;
+    gap: 10px;
+    grid-auto-rows: auto;
+    padding-left: 1%;
+}

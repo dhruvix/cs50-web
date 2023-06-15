@@ -1,0 +1,44 @@
+{% extends "events/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div id="my-events-page-body">
+    <div class="card m-1 auth-card">
+        <div class="card-body">
+            <h1>All your events at a glance</h1>
+        </div>
+    </div>
+    <div class="card m-1 auth-card events-container">
+        <div class="card-body">
+            <h5 class="card-title">Your events</h5>
+            <div class="row row-cols-1 row-cols-md-5 g-2 mb-1" id="your-events"></div>
+            <div class="btn-group justify-content-center" role="group" aria-label="Page navigation">
+                <button type="button" class="btn btn-sm btn-outline-dark disabled" id="prev-your">&laquo;</button>
+                <button type="button" class="btn btn-sm btn-outline-dark disabled" id="next-your">&raquo;</button>
+            </div>
+        </div>
+    </div>
+    <div class="card m-1 auth-card events-container">
+        <div class="card-body">
+            <h5 class="card-title">Upcoming events</h5>
+            <div class="row row-cols-1 row-cols-md-5 g-2 mb-1" id="upcoming-events"></div>
+            <div class="btn-group justify-content-center" role="group" aria-label="Page navigation">
+                <button type="button" class="btn btn-sm btn-outline-dark disabled" id="prev-upcoming">&laquo;</button>
+                <button type="button" class="btn btn-sm btn-outline-dark disabled" id="next-upcoming">&raquo;</button>
+            </div>
+        </div>
+    </div>
+    <div class="card m-1 auth-card events-container">
+        <div class="card-body">
+            <h5 class="card-title">Attended events</h5>
+            <div class="row row-cols-1 row-cols-md-5 g-2 mb-1" id="attended-events"></div>
+            <div class="btn-group justify-content-center" role="group" aria-label="Page navigation">
+                <button type="button" class="btn btn-sm btn-outline-dark disabled" id="prev-attended">&laquo;</button>
+                <button type="button" class="btn btn-sm btn-outline-dark disabled" id="next-attended">&raquo;</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'events/my_events.js' %}"></script>
+{% endblock %}
