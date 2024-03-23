@@ -46,11 +46,6 @@ function display_image(id){
 // EVENT FUNCTIONS
 
 function edit_event(){
-    // variables for the toast functionality
-    const edit_toast = document.getElementById('edit-toast');
-    const toast = new bootstrap.Toast(edit_toast);
-    let toast_body = document.querySelector('.toast-body');
-
     // get form data
     let start_date = document.getElementById("event-start-time");
     let end_date = document.getElementById("event-end-time");
@@ -116,13 +111,11 @@ function edit_event(){
         body: formData
     }).then(response => {
         if(response.status === 200){
-            toast_body.innerHTML = "Event details updated";
-            toast.show();
+            display_toast("Event details updated");
         }
         else{
             response.json().then(res => {
-                toast_body.innerHTML = res.message;
-                toast.show();
+                display_toast(res.message);
             });
         }
     });
@@ -141,7 +134,7 @@ function delete_event(){
         }
         else{
             response.json().then(res => {
-                console.log(res.message);
+                display_toast(res.message);
             });
         }
     });
@@ -150,6 +143,7 @@ function delete_event(){
 // EVENT CARD FUNCTIONS
 function load_cards(){
     const card_display = document.getElementById('card-display');
+    card_display.innerHTML = "";
     const request = new Request(
         `/cards/${event_id}`,
         { headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value } }
@@ -163,9 +157,7 @@ function load_cards(){
                         let event_card = document.createElement('div');
                         event_card.className = "card m-2";
                         event_card.id = `event-card-${card.id}`;
-                        event_card.innerHTML = `<div class="card-header">
-                                                    card ${card.id}
-                                                </div>`;
+                        event_card.innerHTML = `<div class="card-header"></div>`;
                         
                         let card_body = document.createElement('div');
                         card_body.className = "card-body";
@@ -224,8 +216,8 @@ function load_cards(){
                         card_delete_button.classList = "btn btn-outline-danger me-1";
                         card_delete_button.innerHTML = `<i class="bi bi-trash3"></i>`;
                         card_save_button.addEventListener('click', ()=>card_save(card.id));
-                        up_button.addEventListener('click', ()=>card_up(card.position));
-                        down_button.addEventListener('click', ()=>card_down(card.position));
+                        up_button.addEventListener('click', ()=>card_up(card.id, card.position));
+                        down_button.addEventListener('click', ()=>card_down(card.id, card.position));
                         card_delete_button.addEventListener('click', ()=>card_delete(card.id));
                         card_footer.appendChild(card_save_button);
                         card_footer.appendChild(up_button);
@@ -240,29 +232,68 @@ function load_cards(){
         }
         else{
             response.json().then(res => {
-                console.log(res.message);
+                display_toast(res.message);
             });
         }
     });
 }
 
-// TO DO
-function card_up(pos){
-    console.log(pos);
+// Shift event card up
+function card_up(id, pos){
+    var formData = new FormData();
+    formData.append("direction", "up");
+    formData.append("position", pos);
+    const request = new Request(
+        `/shift_card/${id}`,
+        { headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value } }
+    );
+    fetch(request, {
+        method: 'POST',
+        body: formData
+    }).then(response => {
+        if (response.status === 200){
+            response.json().then(res => {
+                if (res.shifted === true) {
+                    load_cards();
+                } else {
+                    display_toast("You cannot move this card up.");
+                }
+            })
+        } else {
+            display_toast("Error in shifting card.");
+        }
+    });
 }
 
-// TO DO
-function card_down(pos){
-    console.log(pos);
+// Shift event card down
+function card_down(id, pos){
+    var formData = new FormData();
+    formData.append("direction", "down");
+    formData.append("position", pos);
+    const request = new Request(
+        `/shift_card/${id}`,
+        { headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value } }
+    );
+    fetch(request, {
+        method: 'POST',
+        body: formData
+    }).then(response => {
+        if (response.status === 200){
+            response.json().then(res => {
+                if (res.shifted === true) {
+                    load_cards();
+                } else {
+                    display_toast("You cannot move this card down.");
+                }
+            })
+        } else {
+            display_toast("Error in shifting card.");
+        }
+    });
 }
 
 // Save changes made to card with id id.
 function card_save(id){
-    // variables for the toast functionality
-    const edit_toast = document.getElementById('edit-toast');
-    const toast = new bootstrap.Toast(edit_toast);
-    let toast_body = document.querySelector('.toast-body');
-
     // Get form data
     let text = document.getElementById(`card-${id}-text`);
     let type = document.getElementById(`card-${id}-type`);
@@ -284,23 +315,17 @@ function card_save(id){
         body: formData
     }).then(response => {
         if(response.status === 200){
-            toast_body.innerHTML = "Changes saved";
-            toast.show();
+            display_toast("Changes saved!");
         }
         else{
             response.json().then(res => {
-                toast_body.innerHTML = res.message;
-                toast.show();
+                display_toast(res.message);
             });
         }
     });
 }
 
 function card_delete(id){
-    // variables for the toast functionality
-    const edit_toast = document.getElementById('edit-toast');
-    const toast = new bootstrap.Toast(edit_toast);
-    let toast_body = document.querySelector('.toast-body');
     // get card element to delete
     let e_card = document.getElementById(`event-card-${id}`);
     const request = new Request(
@@ -313,27 +338,20 @@ function card_delete(id){
         if(response.status === 204){
             num_cards -= 1;
             e_card.remove();
-            toast_body.innerHTML = "Card deleted";
-            toast.show();
+            display_toast("Card deleted");
         }
         else{
             response.json().then(res => {
-                toast_body.innerHTML = res.message;
-                toast.show();
+                display_toast(res.message);
             });
         }
     });
 }
 
 function add_card(){
-    // variables for the toast functionality
-    const edit_toast = document.getElementById('edit-toast');
-    const toast = new bootstrap.Toast(edit_toast);
-    let toast_body = document.querySelector('.toast-body');
     // Limit number of event cards to 10
     if(num_cards===10){
-        toast_body.innerHTML = "you can't have more than 10 cards";
-        toast.show();
+        display_toast("You can't have more than 10 cards");
         return
     }
     const card_display = document.getElementById('card-display');
@@ -352,7 +370,7 @@ function add_card(){
                 let event_card = document.createElement('div');
                 event_card.className = "card m-2";
                 event_card.innerHTML = `<div class="card-header">
-                                            card ${res.card.id}
+                                            new card
                                         </div>`;
                 
                 let card_body = document.createElement('div');
@@ -412,8 +430,8 @@ function add_card(){
                 card_delete_button.classList = "btn btn-outline-danger me-1";
                 card_delete_button.innerHTML = `<i class="bi bi-trash3"></i>`;
                 card_save_button.addEventListener('click', ()=>card_save(res.card.id));
-                up_button.addEventListener('click', ()=>card_up(res.card.id));
-                down_button.addEventListener('click', ()=>card_down(res.card.id));
+                up_button.addEventListener('click', ()=>card_up(res.card.id, res.card.position));
+                down_button.addEventListener('click', ()=>card_down(res.card.id, res.card.position));
                 card_delete_button.addEventListener('click', ()=>card_delete(res.card.id));
                 card_footer.appendChild(card_save_button);
                 card_footer.appendChild(up_button);
@@ -427,9 +445,17 @@ function add_card(){
         }
         else{
             response.json().then(res => {
-                toast_body.innerHTML = res.message;
-                toast.show();
+                display_toast(res.message);
             });
         }
     });
+}
+
+function display_toast(message) {
+    // display message in the toast
+    const edit_toast = document.getElementById('edit-toast');
+    const toast = new bootstrap.Toast(edit_toast);
+    let toast_body = document.querySelector('.toast-body');
+    toast_body.innerHTML = message;
+    toast.show();
 }

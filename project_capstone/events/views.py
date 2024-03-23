@@ -1,9 +1,8 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.conf import settings
-from django.db.models import Count, Exists, OuterRef, Max
+from django.db.models import Max
 from django.db import IntegrityError
 from django.utils import timezone
 from django.http import HttpResponseRedirect, JsonResponse
@@ -186,7 +185,8 @@ def change_password(request):
         return JsonResponse({
             "message": "Incorrect password"
         }, status=400)
-    
+
+
 @login_required
 def handle_invites(request):
     
@@ -336,6 +336,7 @@ def get_events(request, tag):
             "message": r'{0} events'.format(tag),
             "events": [e.serialize() for e in events]
             }, status=200)
+
 
 @login_required
 def handle_event(request, id):
@@ -515,4 +516,39 @@ def handle_cards(request, id):
             return JsonResponse({
                 "message": "Couldn't save changes"
             }, status=500)
+
+
+@login_required
+def shift_card(request, id):
     
+    if request.method != "POST":
+        return JsonResponse({
+                "message": "Invalid function call",
+                "shifted": False
+            }, status=500)
+    
+    # Move the card in the direction specified (up or down)
+    direction = request.POST['direction']
+    curr_card = EventCard.objects.filter(pk=id).first()
+    if direction == 'up':
+        if curr_card.position == 1:
+            return JsonResponse({
+                "shifted": False
+            }, status=200)
+        other_card = EventCard.objects.filter(event_id=curr_card.event_id, position=curr_card.position-1).first()
+        other_card.position = other_card.position + 1
+        curr_card. position = curr_card.position - 1
+    else:
+        num_cards = Event.objects.filter(pk=curr_card.event_id).first().num_cards()
+        if curr_card.position == num_cards:
+            return JsonResponse({
+                "shifted": False
+            }, status=200)
+        other_card = EventCard.objects.filter(event_id=curr_card.event_id, position=curr_card.position+1).first()
+        other_card.position = other_card.position - 1
+        curr_card. position = curr_card.position + 1
+    other_card.save()
+    curr_card.save()
+    return JsonResponse({
+            "shifted": True
+        }, status=200)

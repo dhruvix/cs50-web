@@ -21,4 +21,5 @@ urlpatterns = [
     path("events/<str:tag>", views.get_events, name="events"),
     path("event/<int:id>", views.handle_event, name="handle_event"),
     path("cards/<int:id>", views.handle_cards, name="handle_event_cards"),
+    path("shift_card/<int:id>", views.shift_card, name="shift_card"),
 ]
